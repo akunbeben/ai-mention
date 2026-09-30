@@ -18,6 +18,7 @@ Add this entry to your lazy.nvim plugin list:
 ```lua
 {
   "akunbeben/ai-mention",
+  opts = { harness = "omp" }, -- or "pi"; omit to keep clipboard-only behavior
   keys = {
     {
       "<leader>am",
@@ -30,6 +31,11 @@ Add this entry to your lazy.nvim plugin list:
       function() require("ai_mention").copy({ full_path = true }) end,
       mode = "x",
       desc = "Copy AI file mention with full path",
+    },
+    {
+      "<leader>ao",
+      function() require("ai_mention").open() end,
+      desc = "Open AI harness session",
     },
   },
 }
@@ -49,6 +55,9 @@ Add the visual mapping to `~/.config/nvim/init.lua`:
 ```lua
 vim.keymap.set("x", "<leader>am", function() require("ai_mention").copy() end, { desc = "Copy AI file mention" })
 vim.keymap.set("x", "<leader>aM", function() require("ai_mention").copy({ full_path = true }) end, { desc = "Copy AI file mention with full path" })
+-- Optional: configure a managed harness session (choose "pi" or "omp").
+require("ai_mention").setup({ harness = "omp" })
+vim.keymap.set("n", "<leader>ao", function() require("ai_mention").open() end, { desc = "Open AI harness session" })
 ```
 
 Set `vim.g.mapleader` (if you use it) **before** defining the keymaps. For example, `vim.g.mapleader = " "` makes `<leader>am` into `Space a m`. Change either shortcut to your preferred keys, or omit the mapping you do not need.
@@ -58,7 +67,11 @@ Set `vim.g.mapleader` (if you use it) **before** defining the keymaps. For examp
 1. Open a saved file.
 2. Select lines with `V` and move the cursor. `v` and `Ctrl-V` also work.
 3. Press `<leader>am` for a path relative to Neovim's working directory, or `<leader>aM` for the full absolute path.
-4. Paste into your AI harness. The reference has the form `@path/to/file:first-line-last-line`. To inspect the clipboard in Neovim, run `:echo getreg('+')`.
+4. With a configured harness, open a Pi/OMP session using `<leader>ao`. The session runs in a Neovim terminal; use normal window navigation to return to the file.
+5. Copy a mention with `<leader>am` or `<leader>aM`. The reference is added to the session's input **without submitting it**, and remains in the clipboard. With multiple managed sessions of the selected harness, choose the destination from the picker. If none is connected, the mention remains in the clipboard and a warning appears.
+6. Without a configured harness, paste the clipboard into your AI tool. The reference has the form `@path/to/file:first-line-last-line`. To inspect it in Neovim, run `:echo getreg('+')`.
+
+The plugin can send to sessions opened with `open()` in the same Neovim instance; it cannot discover Pi/OMP sessions started in unrelated terminals. Managed sessions keep their starting working directory. A mention outside that directory uses an absolute path so the harness can find the file.
 
 ## Integration
 
