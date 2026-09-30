@@ -10,7 +10,13 @@ function M.copy(opts)
   local first = math.min(vim.fn.line("v"), vim.fn.line("."))
   local last = math.max(vim.fn.line("v"), vim.fn.line("."))
   local lines = first == last and tostring(first) or first .. "-" .. last
-  vim.fn.setreg("+", "@" .. vim.fn.fnamemodify(path, opts and opts.full_path and ":p" or ":.") .. ":" .. lines)
+  local full_path = opts and opts.full_path or false
+  local mention = "@" .. vim.fn.fnamemodify(path, full_path and ":p" or ":.") .. ":" .. lines
+  vim.fn.setreg("+", mention)
+  vim.api.nvim_exec_autocmds("User", {
+    pattern = "AiMentionCopied",
+    data = { mention = mention, file = path, first_line = first, last_line = last, full_path = full_path },
+  })
 end
 
 return M

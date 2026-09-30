@@ -60,6 +60,23 @@ Set `vim.g.mapleader` (if you use it) **before** defining the keymaps. For examp
 3. Press `<leader>am` for a path relative to Neovim's working directory, or `<leader>aM` for the full absolute path.
 4. Paste into your AI harness. The reference has the form `@path/to/file:first-line-last-line`. To inspect the clipboard in Neovim, run `:echo getreg('+')`.
 
+## Integration
+
+Each successful copy emits the Neovim `User` autocmd event `AiMentionCopied` **after** writing to the `+` clipboard. Other Neovim plugins or integrations can subscribe:
+
+```lua
+vim.api.nvim_create_autocmd("User", {
+  pattern = "AiMentionCopied",
+  callback = function(event)
+    local data = event.data
+    -- data.mention, data.file, data.first_line, data.last_line, data.full_path
+    print(data.mention)
+  end,
+})
+```
+
+`file` is the absolute buffer path; `first_line` and `last_line` are 1-based inclusive numbers; `full_path` indicates which mention format was copied. No event fires when the buffer has no file path or clipboard writing fails. Neovim `User` events are local to that Neovim instance; standalone apps need a Neovim-side bridge or can read the clipboard.
+
 ## Verification
 
 From the plugin directory:
