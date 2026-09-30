@@ -17,7 +17,7 @@ Add this entry to your lazy.nvim plugin list:
 
 ```lua
 {
-  "akunbeben/nvim-ai-mention",
+  "akunbeben/ai-mention",
   keys = {
     {
       "<leader>am",
@@ -41,7 +41,7 @@ On macOS or Linux, install it as a native Neovim package:
 
 ```sh
 mkdir -p ~/.local/share/nvim/site/pack/ai-mention/start
-git clone https://github.com/akunbeben/nvim-ai-mention.git ~/.local/share/nvim/site/pack/ai-mention/start/nvim-ai-mention
+git clone https://github.com/akunbeben/ai-mention.git ~/.local/share/nvim/site/pack/ai-mention/start/ai-mention
 ```
 
 Add the visual mapping to `~/.config/nvim/init.lua`:
